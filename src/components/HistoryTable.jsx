@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import styles from './HistoryTable.module.css'
 import { aplicarFiltros, ordenarRegistros } from '../utils/filters'
+import { gerarCSV, downloadCSV } from '../utils/csv'
 
 function HistoryTable({ historico }) {
   const [dataMin, setDataMin] = useState('')
@@ -9,6 +10,7 @@ function HistoryTable({ historico }) {
   const [cotacaoMax, setCotacaoMax] = useState('')
   const [ordenarPor, setOrdenarPor] = useState('data')
   const [direcao, setDirecao] = useState('asc')
+  const [mensagem, setMensagem] = useState('')
 
   const filtrados = useMemo(() => {
     const f = aplicarFiltros(historico, { dataMin, dataMax, cotacaoMin, cotacaoMax })
@@ -23,6 +25,16 @@ function HistoryTable({ historico }) {
   }
 
   const toggleDirecao = () => setDirecao((d) => (d === 'asc' ? 'desc' : 'asc'))
+
+  const exportar = () => {
+    if (filtrados.length === 0) {
+      setMensagem('Não há registros para exportar.')
+      return
+    }
+    const csv = gerarCSV(filtrados)
+    const ok = downloadCSV(csv, 'currency-exchange.csv')
+    setMensagem(ok ? 'CSV exportado com sucesso.' : 'Falha ao exportar.')
+  }
 
   return (
     <section className={styles.card}>
@@ -43,7 +55,10 @@ function HistoryTable({ historico }) {
           <option value="cotacao">Cotação</option>
         </select>
         <button onClick={toggleDirecao}>{direcao === 'asc' ? 'Ascendente' : 'Descendente'}</button>
+        <button onClick={exportar} className={styles.botaoExportar}>Exportar CSV</button>
       </div>
+
+      {mensagem && <p className={styles.mensagem}>{mensagem}</p>}
 
       <div className={styles.tabelaWrapper}>
         <table className={styles.tabela}>
