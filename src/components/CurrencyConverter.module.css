@@ -31,12 +31,13 @@
   color: #4b5563;
 }
 
-.campo select,
-.campo input {
-  padding: 0.5rem 0.6rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.95rem;
+.campo input.inputErro {
+  border-color: #dc2626;
+}
+
+.erro {
+  color: #dc2626;
+  font-size: 0.78rem;
 }
 
 .botaoInverter {

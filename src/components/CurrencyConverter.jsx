@@ -1,7 +1,9 @@
 import styles from './CurrencyConverter.module.css'
 
 function CurrencyConverter({ moedas, moedaOrigem, moedaDestino, valor, taxa, data, onOrigemChange, onDestinoChange, onValorChange, onInverter }) {
-  const resultado = (parseFloat(valor) || 0) * taxa
+  const numero = parseFloat(valor)
+  const valido = !isNaN(numero) && numero >= 0
+  const resultado = valido ? numero * taxa : 0
 
   return (
     <section className={styles.card}>
@@ -18,7 +20,16 @@ function CurrencyConverter({ moedas, moedaOrigem, moedaDestino, valor, taxa, dat
 
         <div className={styles.campo}>
           <label>Valor</label>
-          <input type="number" value={valor} onChange={(e) => onValorChange(e.target.value)} min="0" />
+          <input
+            type="number"
+            value={valor}
+            onChange={(e) => onValorChange(e.target.value)}
+            min="0"
+            className={!valido && valor !== '' ? styles.inputErro : ''}
+          />
+          {!valido && valor !== '' && (
+            <span className={styles.erro}>Informe um valor numérico não negativo.</span>
+          )}
         </div>
 
         <button className={styles.botaoInverter} onClick={onInverter} title="Inverter moedas">⇄</button>
@@ -36,7 +47,7 @@ function CurrencyConverter({ moedas, moedaOrigem, moedaDestino, valor, taxa, dat
       <div className={styles.resultado}>
         <p>Taxa: <strong>{taxa}</strong> · Data: <strong>{data}</strong></p>
         <p className={styles.valorConvertido}>
-          {valor || 0} {moedaOrigem} = {resultado.toFixed(2)} {moedaDestino}
+          {valido ? `${valor || 0} ${moedaOrigem} = ${resultado.toFixed(2)} ${moedaDestino}` : '—'}
         </p>
       </div>
     </section>
