@@ -6,6 +6,16 @@ import PeriodSelector from './components/PeriodSelector'
 import HistoryChart from './components/HistoryChart'
 import HistoryTable from './components/HistoryTable'
 
+const MOEDAS = [
+  { code: 'EUR', nome: 'Euro' },
+  { code: 'USD', nome: 'Dólar Americano' },
+  { code: 'BRL', nome: 'Real Brasileiro' },
+  { code: 'GBP', nome: 'Libra Esterlina' },
+  { code: 'JPY', nome: 'Iene Japonês' },
+]
+
+const PERIODOS = ['7d', '15d', '30d', '3m', '6m', '1a', '5a']
+
 const MOCK_TAXA = 1.0823
 const MOCK_DATA = '2026-10-27'
 
@@ -60,6 +70,7 @@ function App() {
 
       <main className={styles.main}>
         <CurrencyConverter
+          moedas={MOEDAS}
           moedaOrigem={moedaOrigem}
           moedaDestino={moedaDestino}
           valor={valor}
@@ -71,7 +82,7 @@ function App() {
           onInverter={inverter}
         />
 
-        <PeriodSelector periodo={periodo} onChange={setPeriodo} />
+        <PeriodSelector periodos={PERIODOS} periodo={periodo} onChange={setPeriodo} />
 
         <section className={styles.grid}>
           <HistoryChart historico={MOCK_HISTORICO} />

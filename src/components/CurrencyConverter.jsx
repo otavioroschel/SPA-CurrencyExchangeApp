@@ -1,14 +1,6 @@
 import styles from './CurrencyConverter.module.css'
 
-const MOEDAS = [
-  { code: 'EUR', nome: 'Euro' },
-  { code: 'USD', nome: 'Dólar Americano' },
-  { code: 'BRL', nome: 'Real Brasileiro' },
-  { code: 'GBP', nome: 'Libra Esterlina' },
-  { code: 'JPY', nome: 'Iene Japonês' },
-]
-
-function CurrencyConverter({ moedaOrigem, moedaDestino, valor, taxa, data, onOrigemChange, onDestinoChange, onValorChange, onInverter }) {
+function CurrencyConverter({ moedas, moedaOrigem, moedaDestino, valor, taxa, data, onOrigemChange, onDestinoChange, onValorChange, onInverter }) {
   const resultado = (parseFloat(valor) || 0) * taxa
 
   return (
@@ -18,7 +10,7 @@ function CurrencyConverter({ moedaOrigem, moedaDestino, valor, taxa, data, onOri
         <div className={styles.campo}>
           <label>Moeda de origem</label>
           <select value={moedaOrigem} onChange={(e) => onOrigemChange(e.target.value)}>
-            {MOEDAS.map((m) => (
+            {moedas.map((m) => (
               <option key={m.code} value={m.code}>{m.code} — {m.nome}</option>
             ))}
           </select>
@@ -34,7 +26,7 @@ function CurrencyConverter({ moedaOrigem, moedaDestino, valor, taxa, data, onOri
         <div className={styles.campo}>
           <label>Moeda de destino</label>
           <select value={moedaDestino} onChange={(e) => onDestinoChange(e.target.value)}>
-            {MOEDAS.map((m) => (
+            {moedas.map((m) => (
               <option key={m.code} value={m.code}>{m.code} — {m.nome}</option>
             ))}
           </select>
