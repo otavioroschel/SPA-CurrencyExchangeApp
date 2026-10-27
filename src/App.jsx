@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import CurrencyConverter from './components/CurrencyConverter'
 import PeriodSelector from './components/PeriodSelector'
 import HistoryChart from './components/HistoryChart'
@@ -86,6 +87,7 @@ function App() {
           <HistoryTable historico={historico} moedaOrigem={moedaOrigem} moedaDestino={moedaDestino} valor={valor} />
         </section>
       </main>
+      <Footer />
     </div>
   )
 }
