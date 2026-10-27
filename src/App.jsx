@@ -5,26 +5,24 @@ import CurrencyConverter from './components/CurrencyConverter'
 import PeriodSelector from './components/PeriodSelector'
 import HistoryChart from './components/HistoryChart'
 import HistoryTable from './components/HistoryTable'
-import { obterMoedas, obterTaxaAtual, obterHistorico } from './services/frankfurter'
+import { obterMoedas } from './services/frankfurter'
+import { useExchangeData } from './hooks/useExchangeData'
 
 const PERIODOS = ['7d', '15d', '30d', '3m', '6m', '1a', '5a']
 
 function App() {
   const [moedas, setMoedas] = useState([])
+  const [loadingMoedas, setLoadingMoedas] = useState(true)
+  const [erroMoedas, setErroMoedas] = useState(null)
+
   const [moedaOrigem, setMoedaOrigem] = useState('EUR')
   const [moedaDestino, setMoedaDestino] = useState('USD')
   const [valor, setValor] = useState('100')
   const [periodo, setPeriodo] = useState('30d')
 
-  const [taxa, setTaxa] = useState(null)
-  const [dataTaxa, setDataTaxa] = useState('')
-  const [historico, setHistorico] = useState([])
+  const { taxa, dataTaxa, historico, loading: loadingDados, erro: erroDados } =
+    useExchangeData(moedaOrigem, moedaDestino, periodo)
 
-  const [loadingMoedas, setLoadingMoedas] = useState(true)
-  const [loadingDados, setLoadingDados] = useState(false)
-  const [erro, setErro] = useState(null)
-
-  // Carrega moedas uma vez
   useEffect(() => {
     let ativo = true
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -32,12 +30,11 @@ function App() {
     obterMoedas()
       .then((m) => {
         if (!ativo) return
-        const lista = Object.entries(m).map(([code, nome]) => ({ code, nome }))
-        setMoedas(lista)
+        setMoedas(Object.entries(m).map(([code, nome]) => ({ code, nome })))
       })
       .catch((e) => {
         if (!ativo) return
-        setErro(e.message)
+        setErroMoedas(e.message)
       })
       .finally(() => {
         if (ativo) setLoadingMoedas(false)
@@ -45,50 +42,7 @@ function App() {
     return () => { ativo = false }
   }, [])
 
-  // Carrega taxa atual quando origem/destino mudam
-  useEffect(() => {
-    if (!moedaOrigem || !moedaDestino || moedaOrigem === moedaDestino) return
-    let ativo = true
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoadingDados(true)
-    setErro(null)
-    obterTaxaAtual(moedaOrigem, moedaDestino)
-      .then(({ taxa: t, data: d }) => {
-        if (!ativo) return
-        setTaxa(t)
-        setDataTaxa(d)
-      })
-      .catch((e) => {
-        if (!ativo) return
-        setErro(e.message)
-      })
-      .finally(() => {
-        if (ativo) setLoadingDados(false)
-      })
-    return () => { ativo = false }
-  }, [moedaOrigem, moedaDestino])
-
-  // Carrega histórico quando origem/destino/periodo mudam
-  useEffect(() => {
-    if (!moedaOrigem || !moedaDestino || moedaOrigem === moedaDestino) return
-    let ativo = true
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoadingDados(true)
-    setErro(null)
-    obterHistorico(moedaOrigem, moedaDestino, periodo)
-      .then((h) => {
-        if (!ativo) return
-        setHistorico(h)
-      })
-      .catch((e) => {
-        if (!ativo) return
-        setErro(e.message)
-      })
-      .finally(() => {
-        if (ativo) setLoadingDados(false)
-      })
-    return () => { ativo = false }
-  }, [moedaOrigem, moedaDestino, periodo])
+  const erro = erroMoedas || erroDados
 
   const inverter = () => {
     setMoedaOrigem(moedaDestino)
@@ -100,11 +54,7 @@ function App() {
       <Header />
 
       <main className={styles.main}>
-        {erro && (
-          <div className={styles.erroBanner}>
-            Erro: {erro} — tente novamente.
-          </div>
-        )}
+        {erro && <div className={styles.erroBanner}>Erro: {erro} — tente novamente.</div>}
 
         {loadingMoedas ? (
           <p className={styles.info}>Carregando moedas...</p>
