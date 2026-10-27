@@ -69,7 +69,7 @@ teste('aplicarFiltros combinado', () => {
 // csv
 teste('gerarCSV com cabeçalho', () => {
   const csv = gerarCSV([{ data: '2026-10-01', cotacao: 1.08 }], { origem: 'EUR', destino: 'USD' })
-  assert.equal(csv, '\uFEFFData;Cotacao;Conversao\r\n"2026-10-01";1.0800;"EUR -> USD"')
+  assert.equal(csv, '\uFEFFData;Cotacao;Moeda_Origem;Moeda_Destino;Conversao\r\n="2026-10-01";1.0800;EUR;USD;"EUR -> USD"')
 })
 teste('gerarCSV vazio', () => {
   assert.equal(gerarCSV([]), '')

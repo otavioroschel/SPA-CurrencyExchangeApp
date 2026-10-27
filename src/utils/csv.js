@@ -6,16 +6,15 @@
  */
 export function gerarCSV(registros, contexto = {}) {
   if (!Array.isArray(registros) || registros.length === 0) return ''
-  const par = contexto.origem && contexto.destino
-    ? `${contexto.origem} -> ${contexto.destino}`
-    : ''
-  const cabecalho = ['Data', 'Cotacao', 'Conversao'].join(';')
+  const origem = contexto.origem || ''
+  const destino = contexto.destino || ''
+  const cabecalho = ['Data', 'Cotacao', 'Moeda_Origem', 'Moeda_Destino', 'Conversao'].join(';')
   const linhas = [cabecalho]
   for (const r of registros) {
-    const data = `"${r.data}"`          // aspas forçam texto no Excel (evita ######)
+    const data = `="${r.data}"`          // força texto no Excel (evita ######)
     const cotacao = Number(r.cotacao).toFixed(4)
-    const conversao = par ? `"${par}"` : ''
-    linhas.push(`${data};${cotacao};${conversao}`)
+    const conversao = origem && destino ? `"${origem} -> ${destino}"` : ''
+    linhas.push(`${data};${cotacao};${origem};${destino};${conversao}`)
   }
   return '\uFEFF' + linhas.join('\r\n')
 }
