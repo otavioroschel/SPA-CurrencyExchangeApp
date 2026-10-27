@@ -1,0 +1,16 @@
+.header {
+  background: #1e3a8a;
+  color: #fff;
+  padding: 1.5rem 2rem;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.subtitulo {
+  margin: 0.25rem 0 0;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}

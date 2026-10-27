@@ -1,15 +1,11 @@
 import { useState } from 'react'
 import styles from './App.module.css'
+import Header from './components/Header'
+import CurrencyConverter from './components/CurrencyConverter'
+import PeriodSelector from './components/PeriodSelector'
+import HistoryChart from './components/HistoryChart'
+import HistoryTable from './components/HistoryTable'
 
-const MOEDAS = [
-  { code: 'EUR', nome: 'Euro' },
-  { code: 'USD', nome: 'Dólar Americano' },
-  { code: 'BRL', nome: 'Real Brasileiro' },
-  { code: 'GBP', nome: 'Libra Esterlina' },
-  { code: 'JPY', nome: 'Iene Japonês' },
-]
-
-// Dados fictícios para a primeira interface (mock)
 const MOCK_TAXA = 1.0823
 const MOCK_DATA = '2026-10-27'
 
@@ -47,15 +43,11 @@ const MOCK_HISTORICO = [
   { data: '2026-10-27', cotacao: 1.0823 },
 ]
 
-const PERIODOS = ['7d', '15d', '30d', '3m', '6m', '1a', '5a']
-
 function App() {
   const [moedaOrigem, setMoedaOrigem] = useState('EUR')
   const [moedaDestino, setMoedaDestino] = useState('USD')
   const [valor, setValor] = useState('100')
   const [periodo, setPeriodo] = useState('30d')
-
-  const resultado = (parseFloat(valor) || 0) * MOCK_TAXA
 
   const inverter = () => {
     setMoedaOrigem(moedaDestino)
@@ -64,118 +56,26 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <header className={styles.header}>
-        <h1 className={styles.titulo}>Currency Exchange App</h1>
-        <p className={styles.subtitulo}>Conversão e análise de moedas</p>
-      </header>
+      <Header />
 
       <main className={styles.main}>
-        {/* Conversor */}
-        <section className={styles.card}>
-          <h2 className={styles.cardTitulo}>Conversor de moedas</h2>
-          <div className={styles.conversor}>
-            <div className={styles.campo}>
-              <label>Moeda de origem</label>
-              <select value={moedaOrigem} onChange={(e) => setMoedaOrigem(e.target.value)}>
-                {MOEDAS.map((m) => (
-                  <option key={m.code} value={m.code}>{m.code} — {m.nome}</option>
-                ))}
-              </select>
-            </div>
+        <CurrencyConverter
+          moedaOrigem={moedaOrigem}
+          moedaDestino={moedaDestino}
+          valor={valor}
+          taxa={MOCK_TAXA}
+          data={MOCK_DATA}
+          onOrigemChange={setMoedaOrigem}
+          onDestinoChange={setMoedaDestino}
+          onValorChange={setValor}
+          onInverter={inverter}
+        />
 
-            <div className={styles.campo}>
-              <label>Valor</label>
-              <input
-                type="number"
-                value={valor}
-                onChange={(e) => setValor(e.target.value)}
-                min="0"
-              />
-            </div>
+        <PeriodSelector periodo={periodo} onChange={setPeriodo} />
 
-            <button className={styles.botaoInverter} onClick={inverter} title="Inverter moedas">
-              ⇄
-            </button>
-
-            <div className={styles.campo}>
-              <label>Moeda de destino</label>
-              <select value={moedaDestino} onChange={(e) => setMoedaDestino(e.target.value)}>
-                {MOEDAS.map((m) => (
-                  <option key={m.code} value={m.code}>{m.code} — {m.nome}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className={styles.resultado}>
-            <p>Taxa: <strong>{MOCK_TAXA}</strong> · Data: <strong>{MOCK_DATA}</strong></p>
-            <p className={styles.valorConvertido}>
-              {valor || 0} {moedaOrigem} = {resultado.toFixed(2)} {moedaDestino}
-            </p>
-          </div>
-        </section>
-
-        {/* Período */}
-        <section className={styles.card}>
-          <h2 className={styles.cardTitulo}>Período de análise</h2>
-          <div className={styles.periodos}>
-            {PERIODOS.map((p) => (
-              <button
-                key={p}
-                className={periodo === p ? styles.periodoAtivo : styles.periodo}
-                onClick={() => setPeriodo(p)}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Gráfico + Tabela */}
         <section className={styles.grid}>
-          <div className={styles.card}>
-            <h2 className={styles.cardTitulo}>Histórico — gráfico</h2>
-            <div className={styles.graficoMock}>
-              <svg viewBox="0 0 300 120" className={styles.svg}>
-                <polyline
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  points={MOCK_HISTORICO.map((h, i) => {
-                    const x = (i / (MOCK_HISTORICO.length - 1)) * 290 + 5
-                    const min = Math.min(...MOCK_HISTORICO.map((x) => x.cotacao))
-                    const max = Math.max(...MOCK_HISTORICO.map((x) => x.cotacao))
-                    const y = 110 - ((h.cotacao - min) / (max - min)) * 100
-                    return `${x},${y}`
-                  }).join(' ')}
-                />
-              </svg>
-              <p className={styles.legenda}>Dados fictícios (mock) — integração com API no passo 9</p>
-            </div>
-          </div>
-
-          <div className={styles.card}>
-            <h2 className={styles.cardTitulo}>Histórico — tabela</h2>
-            <div className={styles.tabelaWrapper}>
-              <table className={styles.tabela}>
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Cotação</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_HISTORICO.slice(-10).map((h) => (
-                    <tr key={h.data}>
-                      <td>{h.data}</td>
-                      <td>{h.cotacao.toFixed(4)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className={styles.legenda}>Registros: {MOCK_HISTORICO.length}</p>
-          </div>
+          <HistoryChart historico={MOCK_HISTORICO} />
+          <HistoryTable historico={MOCK_HISTORICO} />
         </section>
       </main>
     </div>
