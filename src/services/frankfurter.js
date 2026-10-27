@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.frankfurter.app'
+const BASE_URL = 'https://api.frankfurter.dev/v1'
 
 const MOEDAS_COMUNS = {
   EUR: 'Euro',

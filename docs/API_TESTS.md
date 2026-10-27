@@ -6,7 +6,7 @@ Postman — investigação e validação dos endpoints da API Frankfurter.
 
 ## 2. API utilizada
 
-- Base URL: `https://api.frankfurter.app`
+- Base URL: `https://api.frankfurter.dev/v1`
 - Documentação oficial: https://www.frankfurter.app/docs/
 
 ## 3. Endpoints investigados

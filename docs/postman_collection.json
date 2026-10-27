@@ -5,7 +5,7 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "https://api.frankfurter.app" }
+    { "key": "baseUrl", "value": "https://api.frankfurter.dev/v1" }
   ],
   "item": [
     {
