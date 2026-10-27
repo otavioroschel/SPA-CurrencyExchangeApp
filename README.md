@@ -1,16 +1,91 @@
-# React + Vite
+# Currency Exchange App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Single Page Application (SPA) em React para consultar taxas de câmbio, converter
+valores e analisar o comportamento histórico de moedas, utilizando a API
+Frankfurter.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Seleção de moeda de origem e destino.
+- Conversão de valor com exibição de taxa e data da cotação.
+- Inversão das moedas.
+- Validação de entradas inválidas.
+- Seleção de período de análise (7d, 15d, 30d, 3m, 6m, 1a, 5a).
+- Gráfico histórico dinâmico.
+- Tabela com dados reais, filtros combináveis (data e cotação) e ordenação.
+- Exportação dos registros filtrados em CSV.
+- Estados de loading, erro e ausência de dados.
+- Interface responsiva (desktop e mobile).
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + JSX (componentes funcionais)
+- Vite 7
+- Recharts (gráficos)
+- CSS Modules
+- Fetch + async/await
+- Postman (investigação da API)
+- Git + GitHub
 
-## Expanding the ESLint configuration
+## Instalação
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+```
+
+## Execução
+
+```bash
+npm run dev
+```
+
+Acesse `http://localhost:5173`.
+
+## Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Testes
+
+```bash
+npm run test        # testes das funções (Node assert)
+npm run lint        # lint
+```
+
+## Arquitetura
+
+```
+src/
+  assets/
+  components/        # Header, CurrencyConverter, PeriodSelector, HistoryChart, HistoryTable
+  hooks/             # useExchangeData
+  services/          # frankfurter.js
+  utils/             # currency, periods, filters, csv
+  App.jsx
+  App.module.css
+  main.jsx
+docs/
+  REQUIREMENTS.md
+  COMPONENTS.md
+  FIGMA.md
+  API_TESTS.md
+  FUNCTION_TESTS.md
+  AI_USAGE.md
+  postman_collection.json
+```
+
+## Documentação
+
+- `docs/REQUIREMENTS.md` — requisitos e regras de negócio.
+- `docs/COMPONENTS.md` — arquitetura e responsabilidades dos componentes.
+- `docs/FIGMA.md` — protótipos e wireframes.
+- `docs/API_TESTS.md` — investigação e testes da API no Postman.
+- `docs/FUNCTION_TESTS.md` — testes das funções JavaScript.
+- `docs/AI_USAGE.md` — registro do uso de IA.
+
+## Imagens
+
+Adicione screenshots da aplicação em `docs/images/` e referencie aqui.
