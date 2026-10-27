@@ -1,63 +1,94 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import Header from './components/Header'
 import CurrencyConverter from './components/CurrencyConverter'
 import PeriodSelector from './components/PeriodSelector'
 import HistoryChart from './components/HistoryChart'
 import HistoryTable from './components/HistoryTable'
-
-const MOEDAS = [
-  { code: 'EUR', nome: 'Euro' },
-  { code: 'USD', nome: 'Dólar Americano' },
-  { code: 'BRL', nome: 'Real Brasileiro' },
-  { code: 'GBP', nome: 'Libra Esterlina' },
-  { code: 'JPY', nome: 'Iene Japonês' },
-]
+import { obterMoedas, obterTaxaAtual, obterHistorico } from './services/frankfurter'
 
 const PERIODOS = ['7d', '15d', '30d', '3m', '6m', '1a', '5a']
 
-const MOCK_TAXA = 1.0823
-const MOCK_DATA = '2026-10-27'
-
-const MOCK_HISTORICO = [
-  { data: '2026-09-27', cotacao: 1.0750 },
-  { data: '2026-09-28', cotacao: 1.0782 },
-  { data: '2026-09-29', cotacao: 1.0810 },
-  { data: '2026-09-30', cotacao: 1.0795 },
-  { data: '2026-10-01', cotacao: 1.0830 },
-  { data: '2026-10-02', cotacao: 1.0805 },
-  { data: '2026-10-03', cotacao: 1.0842 },
-  { data: '2026-10-04', cotacao: 1.0860 },
-  { data: '2026-10-05', cotacao: 1.0825 },
-  { data: '2026-10-06', cotacao: 1.0818 },
-  { data: '2026-10-07', cotacao: 1.0855 },
-  { data: '2026-10-08', cotacao: 1.0870 },
-  { data: '2026-10-09', cotacao: 1.0848 },
-  { data: '2026-10-10', cotacao: 1.0833 },
-  { data: '2026-10-11', cotacao: 1.0865 },
-  { data: '2026-10-12', cotacao: 1.0880 },
-  { data: '2026-10-13', cotacao: 1.0852 },
-  { data: '2026-10-14', cotacao: 1.0840 },
-  { data: '2026-10-15', cotacao: 1.0875 },
-  { data: '2026-10-16', cotacao: 1.0890 },
-  { data: '2026-10-17', cotacao: 1.0862 },
-  { data: '2026-10-18', cotacao: 1.0850 },
-  { data: '2026-10-19', cotacao: 1.0885 },
-  { data: '2026-10-20', cotacao: 1.0900 },
-  { data: '2026-10-21', cotacao: 1.0872 },
-  { data: '2026-10-22', cotacao: 1.0860 },
-  { data: '2026-10-23', cotacao: 1.0895 },
-  { data: '2026-10-24', cotacao: 1.0910 },
-  { data: '2026-10-25', cotacao: 1.0882 },
-  { data: '2026-10-26', cotacao: 1.0870 },
-  { data: '2026-10-27', cotacao: 1.0823 },
-]
-
 function App() {
+  const [moedas, setMoedas] = useState([])
   const [moedaOrigem, setMoedaOrigem] = useState('EUR')
   const [moedaDestino, setMoedaDestino] = useState('USD')
   const [valor, setValor] = useState('100')
   const [periodo, setPeriodo] = useState('30d')
+
+  const [taxa, setTaxa] = useState(null)
+  const [dataTaxa, setDataTaxa] = useState('')
+  const [historico, setHistorico] = useState([])
+
+  const [loadingMoedas, setLoadingMoedas] = useState(true)
+  const [loadingDados, setLoadingDados] = useState(false)
+  const [erro, setErro] = useState(null)
+
+  // Carrega moedas uma vez
+  useEffect(() => {
+    let ativo = true
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadingMoedas(true)
+    obterMoedas()
+      .then((m) => {
+        if (!ativo) return
+        const lista = Object.entries(m).map(([code, nome]) => ({ code, nome }))
+        setMoedas(lista)
+      })
+      .catch((e) => {
+        if (!ativo) return
+        setErro(e.message)
+      })
+      .finally(() => {
+        if (ativo) setLoadingMoedas(false)
+      })
+    return () => { ativo = false }
+  }, [])
+
+  // Carrega taxa atual quando origem/destino mudam
+  useEffect(() => {
+    if (!moedaOrigem || !moedaDestino || moedaOrigem === moedaDestino) return
+    let ativo = true
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadingDados(true)
+    setErro(null)
+    obterTaxaAtual(moedaOrigem, moedaDestino)
+      .then(({ taxa: t, data: d }) => {
+        if (!ativo) return
+        setTaxa(t)
+        setDataTaxa(d)
+      })
+      .catch((e) => {
+        if (!ativo) return
+        setErro(e.message)
+      })
+      .finally(() => {
+        if (ativo) setLoadingDados(false)
+      })
+    return () => { ativo = false }
+  }, [moedaOrigem, moedaDestino])
+
+  // Carrega histórico quando origem/destino/periodo mudam
+  useEffect(() => {
+    if (!moedaOrigem || !moedaDestino || moedaOrigem === moedaDestino) return
+    let ativo = true
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadingDados(true)
+    setErro(null)
+    obterHistorico(moedaOrigem, moedaDestino, periodo)
+      .then((h) => {
+        if (!ativo) return
+        setHistorico(h)
+      })
+      .catch((e) => {
+        if (!ativo) return
+        setErro(e.message)
+      })
+      .finally(() => {
+        if (ativo) setLoadingDados(false)
+      })
+    return () => { ativo = false }
+  }, [moedaOrigem, moedaDestino, periodo])
 
   const inverter = () => {
     setMoedaOrigem(moedaDestino)
@@ -69,24 +100,36 @@ function App() {
       <Header />
 
       <main className={styles.main}>
-        <CurrencyConverter
-          moedas={MOEDAS}
-          moedaOrigem={moedaOrigem}
-          moedaDestino={moedaDestino}
-          valor={valor}
-          taxa={MOCK_TAXA}
-          data={MOCK_DATA}
-          onOrigemChange={setMoedaOrigem}
-          onDestinoChange={setMoedaDestino}
-          onValorChange={setValor}
-          onInverter={inverter}
-        />
+        {erro && (
+          <div className={styles.erroBanner}>
+            Erro: {erro} — tente novamente.
+          </div>
+        )}
+
+        {loadingMoedas ? (
+          <p className={styles.info}>Carregando moedas...</p>
+        ) : (
+          <CurrencyConverter
+            moedas={moedas}
+            moedaOrigem={moedaOrigem}
+            moedaDestino={moedaDestino}
+            valor={valor}
+            taxa={taxa ?? 0}
+            data={dataTaxa}
+            onOrigemChange={setMoedaOrigem}
+            onDestinoChange={setMoedaDestino}
+            onValorChange={setValor}
+            onInverter={inverter}
+          />
+        )}
 
         <PeriodSelector periodos={PERIODOS} periodo={periodo} onChange={setPeriodo} />
 
+        {loadingDados && <p className={styles.info}>Carregando dados...</p>}
+
         <section className={styles.grid}>
-          <HistoryChart historico={MOCK_HISTORICO} />
-          <HistoryTable historico={MOCK_HISTORICO} />
+          <HistoryChart historico={historico} />
+          <HistoryTable historico={historico} />
         </section>
       </main>
     </div>
