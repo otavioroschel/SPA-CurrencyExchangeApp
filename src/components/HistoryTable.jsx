@@ -32,8 +32,10 @@ function HistoryTable({ historico }) {
       return
     }
     const csv = gerarCSV(filtrados)
-    const ok = downloadCSV(csv, 'currency-exchange.csv')
-    setMensagem(ok ? 'CSV exportado com sucesso.' : 'Falha ao exportar.')
+    const dataHoje = new Date().toISOString().slice(0, 10)
+    const nome = `currency-exchange-${dataHoje}.csv`
+    const ok = downloadCSV(csv, nome)
+    setMensagem(ok ? `CSV exportado: ${filtrados.length} registro(s).` : 'Falha ao exportar.')
   }
 
   return (

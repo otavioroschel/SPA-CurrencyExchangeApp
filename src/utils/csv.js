@@ -4,13 +4,20 @@
  * @param {string[]} cabecalhos
  * @returns {string}
  */
+/**
+ * Gera o conteúdo CSV a partir de registros.
+ * @param {Array<{data: string, cotacao: number}>} registros
+ * @param {string[]} cabecalhos
+ * @returns {string}
+ */
 export function gerarCSV(registros, cabecalhos = ['Data', 'Cotação']) {
   if (!Array.isArray(registros) || registros.length === 0) return ''
   const linhas = [cabecalhos.join(';')]
   for (const r of registros) {
-    linhas.push(`${r.data};${r.cotacao}`)
+    const cotacao = Number(r.cotacao).toFixed(4)
+    linhas.push(`${r.data};${cotacao}`)
   }
-  return linhas.join('\n')
+  return '\uFEFF' + linhas.join('\r\n')
 }
 
 /**
