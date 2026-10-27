@@ -45,5 +45,12 @@ export function useExchangeData(origem, destino, periodo) {
     return () => { ativo = false }
   }, [origem, destino, periodo])
 
-  return { taxa, dataTaxa, historico, loading, erro }
+  // Mesma moeda: taxa 1, sem consulta
+  const taxaFinal = origem && destino && origem === destino ? 1 : taxa
+  const dataFinal = origem && destino && origem === destino
+    ? new Date().toISOString().slice(0, 10)
+    : dataTaxa
+  const historicoFinal = origem && destino && origem === destino ? [] : historico
+
+  return { taxa: taxaFinal, dataTaxa: dataFinal, historico: historicoFinal, loading, erro }
 }
