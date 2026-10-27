@@ -38,3 +38,37 @@
   color: #6b7280;
   font-style: italic;
 }
+
+.filtros,
+.ordenacao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filtros input,
+.ordenacao select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.filtros button,
+.ordenacao button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #1e3a8a;
+  background: #1e3a8a;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.vazio {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}

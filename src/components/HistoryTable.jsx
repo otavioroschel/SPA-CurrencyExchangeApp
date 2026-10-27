@@ -1,11 +1,50 @@
+import { useState, useMemo } from 'react'
 import styles from './HistoryTable.module.css'
+import { aplicarFiltros, ordenarRegistros } from '../utils/filters'
 
 function HistoryTable({ historico }) {
-  const registros = historico.slice(-10)
+  const [dataMin, setDataMin] = useState('')
+  const [dataMax, setDataMax] = useState('')
+  const [cotacaoMin, setCotacaoMin] = useState('')
+  const [cotacaoMax, setCotacaoMax] = useState('')
+  const [ordenarPor, setOrdenarPor] = useState('data')
+  const [direcao, setDirecao] = useState('asc')
+
+  const filtrados = useMemo(() => {
+    const f = aplicarFiltros(historico, { dataMin, dataMax, cotacaoMin, cotacaoMax })
+    return ordenarRegistros(f, ordenarPor, direcao)
+  }, [historico, dataMin, dataMax, cotacaoMin, cotacaoMax, ordenarPor, direcao])
+
+  const limpar = () => {
+    setDataMin('')
+    setDataMax('')
+    setCotacaoMin('')
+    setCotacaoMax('')
+  }
+
+  const toggleDirecao = () => setDirecao((d) => (d === 'asc' ? 'desc' : 'asc'))
 
   return (
     <section className={styles.card}>
       <h2 className={styles.cardTitulo}>Histórico — tabela</h2>
+
+      <div className={styles.filtros}>
+        <input type="date" value={dataMin} onChange={(e) => setDataMin(e.target.value)} placeholder="Data mín" />
+        <input type="date" value={dataMax} onChange={(e) => setDataMax(e.target.value)} placeholder="Data máx" />
+        <input type="number" value={cotacaoMin} onChange={(e) => setCotacaoMin(e.target.value)} placeholder="Cotação mín" step="0.0001" />
+        <input type="number" value={cotacaoMax} onChange={(e) => setCotacaoMax(e.target.value)} placeholder="Cotação máx" step="0.0001" />
+        <button onClick={limpar}>Limpar filtros</button>
+      </div>
+
+      <div className={styles.ordenacao}>
+        <label>Ordenar por:</label>
+        <select value={ordenarPor} onChange={(e) => setOrdenarPor(e.target.value)}>
+          <option value="data">Data</option>
+          <option value="cotacao">Cotação</option>
+        </select>
+        <button onClick={toggleDirecao}>{direcao === 'asc' ? 'Ascendente' : 'Descendente'}</button>
+      </div>
+
       <div className={styles.tabelaWrapper}>
         <table className={styles.tabela}>
           <thead>
@@ -15,16 +54,22 @@ function HistoryTable({ historico }) {
             </tr>
           </thead>
           <tbody>
-            {registros.map((h) => (
-              <tr key={h.data}>
-                <td>{h.data}</td>
-                <td>{h.cotacao.toFixed(4)}</td>
+            {filtrados.length === 0 ? (
+              <tr>
+                <td colSpan="2" className={styles.vazio}>Nenhum registro encontrado.</td>
               </tr>
-            ))}
+            ) : (
+              filtrados.map((h) => (
+                <tr key={h.data}>
+                  <td>{h.data}</td>
+                  <td>{Number(h.cotacao).toFixed(4)}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <p className={styles.legenda}>Registros: {historico.length}</p>
+      <p className={styles.legenda}>Registros: {filtrados.length} de {historico.length}</p>
     </section>
   )
 }
