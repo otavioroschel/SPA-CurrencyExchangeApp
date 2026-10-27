@@ -1,6 +1,7 @@
+/* global process */
 import assert from 'node:assert/strict'
 import { converterValor, formatarMoeda, inverterMoedas } from './currency.js'
-import { dataInicioPeriodo, formatarDataISO, filtrarPorPeriodo } from './periods.js'
+import { dataInicioPeriodo, formatarDataISO } from './periods.js'
 import { filtrarPorIntervaloDatas, filtrarPorCotacao, ordenarRegistros, aplicarFiltros } from './filters.js'
 import { gerarCSV } from './csv.js'
 
