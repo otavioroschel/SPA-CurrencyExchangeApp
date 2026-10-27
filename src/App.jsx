@@ -77,6 +77,10 @@ function App() {
 
         {loadingDados && <p className={styles.info}>Carregando dados...</p>}
 
+        {!loadingDados && historico.length === 0 && !erro && (
+          <p className={styles.info}>Nenhum dado histórico disponível para o período selecionado.</p>
+        )}
+
         <section className={styles.grid}>
           <HistoryChart historico={historico} />
           <HistoryTable historico={historico} />
