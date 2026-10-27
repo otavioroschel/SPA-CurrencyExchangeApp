@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "Currency Exchange App - Frankfurter",
+    "description": "Collection para investigação da API Frankfurter no projeto Currency Exchange App.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.frankfurter.app" }
+  ],
+  "item": [
+    {
+      "name": "Moedas disponíveis",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/currencies", "host": ["{{baseUrl}}"], "path": ["currencies"] }
+      }
+    },
+    {
+      "name": "Cotação mais recente",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/latest?from=EUR&to=USD",
+          "host": ["{{baseUrl}}"],
+          "path": ["latest"],
+          "query": [
+            { "key": "from", "value": "EUR" },
+            { "key": "to", "value": "USD" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Histórico por intervalo",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/2026-09-27..2026-10-27?from=EUR&to=USD",
+          "host": ["{{baseUrl}}"],
+          "path": ["2026-09-27..2026-10-27"],
+          "query": [
+            { "key": "from", "value": "EUR" },
+            { "key": "to", "value": "USD" }
+          ]
+        }
+      }
+    }
+  ]
+}
