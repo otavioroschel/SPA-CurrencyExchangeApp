@@ -33,7 +33,10 @@ export function useExchangeData(origem, destino, periodo) {
       })
       .catch((e) => {
         if (!ativo) return
-        setErro(e.message)
+        const msg = e.message === 'Failed to fetch'
+          ? 'Falha de rede. Verifique sua conexão com a internet.'
+          : e.message
+        setErro(msg)
       })
       .finally(() => {
         if (ativo) setLoading(false)

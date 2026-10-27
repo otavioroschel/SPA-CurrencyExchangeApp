@@ -1,13 +1,27 @@
 const BASE_URL = 'https://api.frankfurter.app'
 
-/**
- * Busca a lista de moedas disponíveis.
- * @returns {Promise<Record<string,string>>}
- */
+const MOEDAS_COMUNS = {
+  EUR: 'Euro',
+  USD: 'US Dollar',
+  BRL: 'Brazilian Real',
+  GBP: 'British Pound',
+  JPY: 'Japanese Yen',
+  AUD: 'Australian Dollar',
+  CAD: 'Canadian Dollar',
+  CHF: 'Swiss Franc',
+  CNY: 'Chinese Renminbi Yuan',
+  MXN: 'Mexican Peso',
+}
+
 export async function obterMoedas() {
-  const res = await fetch(`${BASE_URL}/currencies`)
-  if (!res.ok) throw new Error(`Falha ao buscar moedas (${res.status})`)
-  return res.json()
+  try {
+    const res = await fetch(`${BASE_URL}/currencies`)
+    if (!res.ok) throw new Error(`Falha ao buscar moedas (${res.status})`)
+    return res.json()
+  } catch (e) {
+    console.warn('Falha ao buscar moedas na API, usando lista local.', e)
+    return MOEDAS_COMUNS
+  }
 }
 
 /**
