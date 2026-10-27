@@ -1,23 +1,26 @@
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import styles from './HistoryChart.module.css'
 
 function HistoryChart({ historico }) {
-  const min = Math.min(...historico.map((h) => h.cotacao))
-  const max = Math.max(...historico.map((h) => h.cotacao))
-
-  const pontos = historico.map((h, i) => {
-    const x = (i / (historico.length - 1)) * 290 + 5
-    const y = 110 - ((h.cotacao - min) / (max - min || 1)) * 100
-    return `${x},${y}`
-  }).join(' ')
+  const dados = historico.map((h) => ({ data: h.data, cotacao: h.cotacao }))
 
   return (
     <section className={styles.card}>
       <h2 className={styles.cardTitulo}>Histórico — gráfico</h2>
-      <div className={styles.graficoMock}>
-        <svg viewBox="0 0 300 120" className={styles.svg}>
-          <polyline fill="none" stroke="currentColor" strokeWidth="2" points={pontos} />
-        </svg>
-        <p className={styles.legenda}>Dados fictícios (mock) — integração com API no passo 9</p>
+      <div className={styles.grafico}>
+        {dados.length === 0 ? (
+          <p className={styles.legenda}>Sem dados para exibir.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={dados} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="data" tick={{ fontSize: 10 }} />
+              <YAxis domain={['auto', 'auto']} tick={{ fontSize: 10 }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="cotacao" stroke="#1e3a8a" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </section>
   )
