@@ -83,7 +83,7 @@ function App() {
 
         <section className={styles.grid}>
           <HistoryChart historico={historico} />
-          <HistoryTable historico={historico} moedaOrigem={moedaOrigem} moedaDestino={moedaDestino} />
+          <HistoryTable historico={historico} moedaOrigem={moedaOrigem} moedaDestino={moedaDestino} valor={valor} />
         </section>
       </main>
     </div>

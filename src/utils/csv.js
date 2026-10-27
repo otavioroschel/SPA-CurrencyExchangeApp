@@ -1,20 +1,25 @@
 /**
  * Gera o conteúdo CSV a partir de registros.
  * @param {Array<{data: string, cotacao: number}>} registros
- * @param {{origem?: string, destino?: string}} contexto
+ * @param {{origem?: string, destino?: string, valorOriginal?: number|string}} contexto
  * @returns {string}
  */
 export function gerarCSV(registros, contexto = {}) {
   if (!Array.isArray(registros) || registros.length === 0) return ''
   const origem = contexto.origem || ''
   const destino = contexto.destino || ''
-  const cabecalho = ['Data', 'Cotacao', 'Moeda_Origem', 'Moeda_Destino', 'Conversao'].join(';')
+  const valorOriginal = contexto.valorOriginal != null ? Number(contexto.valorOriginal) : null
+  const cabecalho = ['Data', 'Cotacao', 'Valor_Original', 'Moeda_Origem', 'Valor_Convertido', 'Moeda_Destino', 'Conversao'].join(';')
   const linhas = [cabecalho]
   for (const r of registros) {
     const data = `="${r.data}"`          // força texto no Excel (evita ######)
     const cotacao = Number(r.cotacao).toFixed(4)
+    const vo = valorOriginal != null && !isNaN(valorOriginal) ? valorOriginal.toFixed(2) : ''
+    const vc = valorOriginal != null && !isNaN(valorOriginal)
+      ? (valorOriginal * Number(r.cotacao)).toFixed(2)
+      : ''
     const conversao = origem && destino ? `"${origem} -> ${destino}"` : ''
-    linhas.push(`${data};${cotacao};${origem};${destino};${conversao}`)
+    linhas.push(`${data};${cotacao};${vo};${origem};${vc};${destino};${conversao}`)
   }
   return '\uFEFF' + linhas.join('\r\n')
 }

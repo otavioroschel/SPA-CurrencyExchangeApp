@@ -3,7 +3,7 @@ import styles from './HistoryTable.module.css'
 import { aplicarFiltros, ordenarRegistros } from '../utils/filters'
 import { gerarCSV, downloadCSV } from '../utils/csv'
 
-function HistoryTable({ historico, moedaOrigem, moedaDestino }) {
+function HistoryTable({ historico, moedaOrigem, moedaDestino, valor }) {
   const [dataMin, setDataMin] = useState('')
   const [dataMax, setDataMax] = useState('')
   const [cotacaoMin, setCotacaoMin] = useState('')
@@ -31,7 +31,7 @@ function HistoryTable({ historico, moedaOrigem, moedaDestino }) {
       setMensagem('Não há registros para exportar.')
       return
     }
-    const csv = gerarCSV(filtrados, { origem: moedaOrigem, destino: moedaDestino })
+    const csv = gerarCSV(filtrados, { origem: moedaOrigem, destino: moedaDestino, valorOriginal: valor })
     const dataHoje = new Date().toISOString().slice(0, 10)
     const nome = `currency-exchange-${dataHoje}.csv`
     const ok = downloadCSV(csv, nome)
